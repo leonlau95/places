@@ -3,6 +3,8 @@ const express = require('express');
 const hbs = require('hbs');
 const bodyParser = require('body-parser');
 const server = express();
+const path = require('path');
+const filemgr = require('./filemgr');
 
 const port = process.env.PORT || 3000;
 
@@ -29,6 +31,8 @@ server.get('/',(req, res) => {
   res.render('home.hbs');
 });
 
+server.use(express.static(path.join(__dirname, 'public')));
+
 server.get('/form',(req, res) => {
   res.render('form.hbs');
 });
@@ -53,10 +57,25 @@ server.post('/getplaces', (req, res) => {
 
     filteredResults = extractData(response.data.results);
 
+    filemgr.saveData(filteredResults).then((result) => {
+      res.render('result.hbs');
+    }).catch((errorMessage) => {
+      console.log(errorMessage);
+    });
+
     //res.status(200).send(filteredResults);
-    res.render('result.hbs');
+
   }).catch((error) => {
     console.log(error);
+  });
+});
+
+server.get('/historical', (req, res) => {
+  filemgr.getAllData().then((result) => {
+    filteredResults = result;
+    res.render('historical.hbs');
+  }).catch((error) => {
+    console.log(errorMessage);
   });
 });
 
@@ -80,7 +99,7 @@ const extractData = (originalResults) => {
       tempObj = {
         name: originalResults[i].name,
         address: originalResults[i].vicinity,
-        photo_reference: `https://www.vishmax.com/en/innovattive-cms/themes/themax-theme-2015/images/no-image-found.gif`,
+        photo_reference: `/no_image_found.jpeg`,
       }
     }
 
