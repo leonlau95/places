@@ -18,6 +18,10 @@
 </div>
 
 <div class="container">
+  <form action="/" method="post">
+    <button class="btn btn-primary btn-lg" type="submit" formaction="/delete">Delete All Records</button>
+  </form>
+  <br></br>
   <table class="table table-striped">
     {{#list items}}<tr><td>{{name}}</td><td>{{address}}</td><td><img src={{photo_reference}} width="200" height="200"></td></tr>{{/list}}
   </table>
